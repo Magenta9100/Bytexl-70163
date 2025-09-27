@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple SVG Drawing Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      border: 1px solid #000;
+      width: 650px;
+      height: 500px;
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+      background: #f7f7f7;
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body>
+  <h3>Simple SVG Drawing Tool</h3>
+  <div class="container">
+    <svg id="drawingArea"></svg>
+  </div>
+
+  <script>
+    const svg = document.getElementById("drawingArea");
+    let drawing = false;
+    let currentLine;
+
+    svg.addEventListener("mousedown", (e) => {
+      drawing = true;
+      const {x, y} = getMousePosition(e);
+
+      // create a new polyline for each stroke
+      currentLine = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+      currentLine.setAttribute("fill", "none");
+      currentLine.setAttribute("stroke", "blue");
+      currentLine.setAttribute("stroke-width", "2");
+      currentLine.setAttribute("points", `${x},${y}`);
+      svg.appendChild(currentLine);
+    });
+
+    svg.addEventListener("mousemove", (e) => {
+      if (!drawing) return;
+      const {x, y} = getMousePosition(e);
+      let points = currentLine.getAttribute("points");
+      currentLine.setAttribute("points", points + ` ${x},${y}`);
+    });
+
+    svg.addEventListener("mouseup", () => drawing = false);
+    svg.addEventListener("mouseleave", () => drawing = false);
+
+    function getMousePosition(evt) {
+      const rect = svg.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+      };
+    }
+  </script>
+</body>
+</html>
+
+
